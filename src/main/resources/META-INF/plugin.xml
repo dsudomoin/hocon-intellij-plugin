@@ -1,0 +1,131 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>io.github.dsudomoin.hocon</id>
+    <name>HOCON</name>
+    <vendor url="https://github.com/dsudomoin">dsudomoin</vendor>
+    <description><![CDATA[
+        <p>Language support for <b>HOCON</b> (Human-Optimized Config Object Notation) &mdash; the
+        Typesafe/Lightbend Config format used by <code>application.conf</code>, Akka, Play, Kora and others.</p>
+        <ul>
+            <li>Syntax highlighting, brace matching, folding, commenting and a configurable formatter.</li>
+            <li>Structure view, breadcrumbs and smart editing (quotes, move statement, extend selection).</li>
+            <li>Resolution of substitutions (<code>&#36;{...}</code>) and <code>include</code>s with merge
+            semantics: go to declaration, find usages, rename, highlight usages, go to symbol, copy reference.</li>
+            <li>Completion, inspections with quick fixes, quick documentation and language injection.</li>
+            <li>A <code>schemaProvider</code> extension point so other plugins can add framework-specific
+            key completion, documentation and validation.</li>
+        </ul>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <!-- Cross-language references (HOCON paths in foreign string literals, class names in HOCON strings).
+         Optional: the plugin works fully without Java/Kotlin. -->
+    <depends optional="true" config-file="jvm-support.xml">com.intellij.java</depends>
+
+    <resource-bundle>messages.HoconBundle</resource-bundle>
+
+    <!-- D8: external plugins (e.g. a future Kora plugin) contribute a key schema here. -->
+    <extensionPoints>
+        <extensionPoint name="schemaProvider"
+            interface="io.github.dsudomoin.hocon.schema.HoconSchemaProvider" dynamic="true"/>
+        <!-- External plugins paint framework-specific values (e.g. enum constants) here. -->
+        <extensionPoint name="valueHighlighter"
+            interface="io.github.dsudomoin.hocon.highlight.HoconValueHighlighter" dynamic="true"/>
+    </extensionPoints>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType
+            name="HOCON"
+            language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.lang.HoconFileType"
+            fieldName="INSTANCE"
+            extensions="conf;hocon"/>
+        <lang.parserDefinition language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.parser.HoconParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.highlight.HoconSyntaxHighlighterFactory"/>
+        <colorSettingsPage implementation="io.github.dsudomoin.hocon.highlight.HoconColorSettingsPage"/>
+        <additionalTextAttributes scheme="Default" file="colorSchemes/HoconDefault.xml"/>
+        <additionalTextAttributes scheme="Darcula" file="colorSchemes/HoconDarcula.xml"/>
+        <annotator language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.annotator.HoconHighlightingAnnotator"/>
+        <lang.braceMatcher language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.editor.HoconBraceMatcher"/>
+        <lang.commenter language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.editor.HoconCommenter"/>
+        <lang.foldingBuilder language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.folding.HoconFoldingBuilder"/>
+        <lang.formatter language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.formatting.HoconFormattingModelBuilder"/>
+        <langCodeStyleSettingsProvider
+            implementation="io.github.dsudomoin.hocon.codestyle.HoconLanguageCodeStyleSettingsProvider"/>
+        <lang.quoteHandler language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.editor.HoconQuoteHandler"/>
+        <lang.psiStructureViewFactory language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.structure.HoconStructureViewFactory"/>
+        <breadcrumbsInfoProvider
+            implementation="io.github.dsudomoin.hocon.structure.HoconBreadcrumbsProvider"/>
+        <statementUpDownMover
+            implementation="io.github.dsudomoin.hocon.editor.HoconStatementMover"/>
+        <extendWordSelectionHandler
+            implementation="io.github.dsudomoin.hocon.editor.HoconWordSelectioner"/>
+
+        <!-- Phase 3: semantics, references &amp; navigation -->
+        <lang.elementManipulator forClass="io.github.dsudomoin.hocon.psi.HFieldKey"
+            implementationClass="io.github.dsudomoin.hocon.psi.HKeyManipulator"/>
+        <lang.elementManipulator forClass="io.github.dsudomoin.hocon.psi.HSubstitutionKey"
+            implementationClass="io.github.dsudomoin.hocon.psi.HSubstitutionKeyManipulator"/>
+        <lang.findUsagesProvider language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.navigation.HoconFindUsagesProvider"/>
+        <renamePsiElementProcessor
+            implementation="io.github.dsudomoin.hocon.navigation.HoconRenameProcessor"/>
+        <gotoSymbolContributor
+            implementation="io.github.dsudomoin.hocon.navigation.HoconGotoSymbolContributor"/>
+        <fileBasedIndex
+            implementation="io.github.dsudomoin.hocon.index.HoconKeyIndex"/>
+        <qualifiedNameProvider
+            implementation="io.github.dsudomoin.hocon.navigation.HoconQualifiedNameProvider"/>
+        <readWriteAccessDetector
+            implementation="io.github.dsudomoin.hocon.navigation.HoconReadWriteAccessDetector"/>
+
+        <!-- Phase 4: completion &amp; inspections -->
+        <completion.contributor language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.completion.HoconCompletionContributor"/>
+        <localInspection language="HOCON" shortName="HoconUnresolvedSubstitution"
+            displayName="Unresolved substitution" groupName="HOCON"
+            enabledByDefault="true" level="WEAK WARNING"
+            implementationClass="io.github.dsudomoin.hocon.inspections.HoconUnresolvedSubstitutionInspection"/>
+        <localInspection language="HOCON" shortName="HoconUnresolvedInclude"
+            displayName="Unresolved include" groupName="HOCON"
+            enabledByDefault="true" level="WARNING"
+            implementationClass="io.github.dsudomoin.hocon.inspections.HoconUnresolvedIncludeInspection"/>
+        <localInspection language="HOCON" shortName="HoconOverriddenKey"
+            displayName="Overridden key" groupName="HOCON"
+            enabledByDefault="true" level="WEAK WARNING"
+            implementationClass="io.github.dsudomoin.hocon.inspections.HoconDuplicateKeyInspection"/>
+        <localInspection language="HOCON" shortName="HoconUnknownKey"
+            displayName="Unknown key" groupName="HOCON"
+            enabledByDefault="false" level="WEAK WARNING"
+            implementationClass="io.github.dsudomoin.hocon.inspections.HoconUnknownKeyInspection"/>
+
+        <!-- Phase 5: documentation &amp; language injection -->
+        <lang.documentationProvider language="HOCON"
+            implementationClass="io.github.dsudomoin.hocon.documentation.HoconDocumentationProvider"/>
+        <lang.elementManipulator forClass="io.github.dsudomoin.hocon.psi.HStringValue"
+            implementationClass="io.github.dsudomoin.hocon.psi.HStringValueManipulator"/>
+    </extensions>
+
+    <actions>
+        <action id="Hocon.GotoNextDefinition"
+            class="io.github.dsudomoin.hocon.navigation.HoconGotoNextDefinitionAction"
+            text="Go to Next Definition"
+            description="Navigate to the next definition of this HOCON path"
+            use-shortcut-of="GotoImplementation"/>
+        <action id="Hocon.GotoPrevDefinition"
+            class="io.github.dsudomoin.hocon.navigation.HoconGotoPrevDefinitionAction"
+            text="Go to Previous Definition"
+            description="Navigate to the previous definition of this HOCON path"
+            use-shortcut-of="GotoSuperMethod"/>
+    </actions>
+</idea-plugin>

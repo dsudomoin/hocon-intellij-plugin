@@ -1,0 +1,34 @@
+<scheme name="HOCON Darcula" version="142" parent_scheme="Darcula">
+  <attributes>
+    <option name="HOCON_KEY">
+      <value>
+        <option name="FOREGROUND" value="56a8f5"/>
+      </value>
+    </option>
+    <option name="HOCON_SUBSTITUTION">
+      <value>
+        <option name="FOREGROUND" value="c77dbb"/>
+      </value>
+    </option>
+    <option name="HOCON_SUBSTITUTION_SIGN">
+      <value>
+        <option name="FOREGROUND" value="79c0ff"/>
+      </value>
+    </option>
+    <option name="HOCON_NUMBER">
+      <value>
+        <option name="FOREGROUND" value="2aacb8"/>
+      </value>
+    </option>
+    <option name="HOCON_KEYWORD">
+      <value>
+        <option name="FOREGROUND" value="cf8e6d"/>
+      </value>
+    </option>
+    <option name="HOCON_STRING">
+      <value>
+        <option name="FOREGROUND" value="6aab73"/>
+      </value>
+    </option>
+  </attributes>
+</scheme>

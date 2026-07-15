@@ -1,0 +1,15 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- HOCON paths inside string literals of other JVM languages (Java/Kotlin/Scala) -> HOCON keys. -->
+        <psi.referenceContributor language="UAST"
+            implementation="io.github.dsudomoin.hocon.ref.HoconUastPathReferenceContributor"/>
+        <!-- Fully-qualified class names inside HOCON string values -> the JVM class. -->
+        <psi.referenceContributor language="HOCON"
+            implementation="io.github.dsudomoin.hocon.ref.HoconClassReferenceContributor"/>
+        <!-- Explicit completion of HOCON paths inside string literals of other JVM languages. -->
+        <completion.contributor language="JAVA"
+            implementationClass="io.github.dsudomoin.hocon.completion.HoconForeignLiteralCompletionContributor"/>
+        <completion.contributor language="kotlin"
+            implementationClass="io.github.dsudomoin.hocon.completion.HoconForeignLiteralCompletionContributor"/>
+    </extensions>
+</idea-plugin>

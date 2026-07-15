@@ -1,0 +1,13 @@
+<html>
+<body>
+Reports a non-optional substitution <code>${path}</code> whose <b>root key exists</b> in the config but
+whose full path does not &mdash; a likely typo, such as <code>${app.hsot}</code> where <code>app</code>
+exists but <code>app.hsot</code> does not.
+<p>
+    Substitutions rooted at a key that is not defined anywhere in the config (for example
+    <code>${ENV}</code>) are deliberately left alone, because they usually resolve from system properties
+    or environment variables at runtime. The quick fix converts the substitution to an optional
+    <code>${?path}</code>, which silently yields no value when unresolved.
+</p>
+</body>
+</html>

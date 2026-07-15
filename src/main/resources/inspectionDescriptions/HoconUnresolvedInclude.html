@@ -1,0 +1,11 @@
+<html>
+<body>
+Reports an <code>include "file"</code> or <code>include file("...")</code> directive whose target file
+cannot be found relative to the including file.
+<p>
+    A <code>required(...)</code> include that cannot be resolved is reported as an error, since it must
+    exist. <code>classpath(...)</code> and <code>url(...)</code> includes are never reported because they
+    are resolved dynamically at runtime.
+</p>
+</body>
+</html>

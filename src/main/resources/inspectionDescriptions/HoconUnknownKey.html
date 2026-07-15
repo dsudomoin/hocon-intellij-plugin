@@ -1,0 +1,10 @@
+<html>
+<body>
+Reports a key that is not declared in the schema contributed for its object level.
+<p>
+    This inspection is driven by the <code>schemaProvider</code> extension point. The base plugin ships no
+    schema providers, so nothing is reported unless another plugin (such as a framework-specific plugin)
+    contributes a schema. Keys at object levels the schema does not describe are never reported.
+</p>
+</body>
+</html>
