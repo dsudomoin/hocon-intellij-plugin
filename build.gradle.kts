@@ -1,3 +1,4 @@
+import org.jetbrains.changelog.Changelog
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
@@ -30,6 +31,18 @@ intellijPlatform {
             sinceBuild = "251"
             untilBuild = "263.*"
         }
+
+        // "What's New" on the Marketplace listing, rendered from CHANGELOG.md by the changelog plugin.
+        changeNotes = provider {
+            with(changelog) {
+                renderItem(
+                    (getOrNull(project.version.toString()) ?: getUnreleased())
+                        .withHeader(false)
+                        .withEmptySections(false),
+                    Changelog.OutputType.HTML,
+                )
+            }
+        }
     }
 
     pluginVerification {
@@ -41,4 +54,9 @@ intellijPlatform {
     publishing {
         token = providers.environmentVariable("PUBLISH_TOKEN")
     }
+}
+
+changelog {
+    groups.empty()
+    repositoryUrl = "https://github.com/dsudomoin/hocon-intellij-plugin"
 }
