@@ -10,28 +10,47 @@ only on `com.intellij.modules.platform`, so it installs into any JetBrains IDE.
 
 ## Features
 
-**Editing**
-- File type for `.conf` and `.hocon` with syntax highlighting and a color settings page.
-- Brace matching for `{}`, `[]` and `${}`; `#` line commenting; code folding for objects, arrays and
-  multiline strings.
-- Formatter and code style settings (2-space indent, spacing around separators/commas) that preserve
-  value concatenations and multiline strings.
-- Structure view and breadcrumbs, quote handling, auto-indent between braces, move statement up/down,
-  and smart (extend) selection.
+### Language & editing
 
-**Navigation & refactoring**
-- Substitution resolution: `${path}` / `${?path}` navigate to key declarations, honoring HOCON merge
-  semantics (a key may be declared many times) and `include`d files.
-- `include "file"` / `include file("...")` navigate to the target file.
-- Find usages, rename (updates every declaration of a path and all substitution usages), highlight
-  usages, Copy Reference (full dotted path), and Go to Symbol across the project.
+- Recognizes `.conf` and `.hocon` and parses the **full HOCON grammar** — unquoted strings, value
+  concatenation (`a = ${x} bar ${y}`), path expressions, `${...}` substitutions, `include`s and
+  triple-quoted multiline strings — with a hand-written lexer and parser built for HOCON's
+  context-sensitive corners.
+- **Syntax highlighting** with a dedicated color settings page and bundled Default/Darcula schemes.
+- **Brace matching** for `{}`, `[]` and `${}`, `#` line commenting, and **code folding** for objects,
+  arrays and multiline strings.
+- **Formatter & code style** — 2-space indent and configurable spacing around `:`/`=` separators and
+  commas; value concatenations and multiline strings are deliberately left untouched.
+- **Structure view** and **breadcrumbs** for the key hierarchy, plus auto-closing quotes, auto-indent
+  between braces, **move statement up/down** (whole entries, including multiline) and HOCON-aware
+  **extend selection**.
 
-**Code assistance**
-- Completion for substitution paths, `true`/`false`/`null` value keywords, and include-target paths.
-- Inspections with quick fixes: unresolved substitution (make optional), unresolved include, and
-  overridden (duplicate) keys.
-- Quick documentation (hover / Ctrl+Q) showing a key's path, value and doc comment.
-- Language injection into string values.
+### Navigation & refactoring
+
+- **Substitution resolution** — `${path}` / `${?path}` go to the key's declaration(s), honoring HOCON
+  **merge semantics** (a key may be declared and overridden many times) and following `include`d files.
+  Resolution also reaches `reference.conf` / `application.conf` bundled in library JARs on the classpath,
+  matching `ConfigFactory.load` semantics.
+- **Include navigation** — `include "file"`, `include file("...")` and `include classpath("...")` jump to
+  the target file.
+- **Find usages** and **Rename** (updates every declaration of a path and every substitution that reads
+  it), plus **Highlight usages** (declarations as writes, substitutions as reads).
+- **Go to Symbol** across the project (every key is indexed) and **Copy Reference** of the full dotted path.
+- **Go to Next / Previous Definition** — jump between the repeated declarations of the same path, reusing
+  the Go to Implementation / Go to Super shortcuts.
+- **Cross-language references** (when the Java/Kotlin plugin is installed) — a HOCON path inside a Java,
+  Kotlin or Scala string literal resolves to its key, and a fully-qualified class name inside a HOCON
+  string resolves to the JVM class.
+
+### Code assistance
+
+- **Completion** — child keys inside a substitution (`${a.b.<caret>}`), the `true` / `false` / `null`
+  value keywords, `include` target paths, and HOCON paths typed inside foreign-language string literals.
+- **Inspections with quick fixes** — unresolved substitution (quick fix: make it optional), unresolved
+  include, and an overridden key that a later declaration silently shadows.
+- **Quick documentation** (hover / Ctrl+Q) — a key's full path, resolved value and doc comment.
+- **Language injection** — string values are injection hosts, so any language (SQL, JSON, a regex, …) can
+  be embedded and edited inside them.
 
 ## Extending: the schema provider extension point
 
@@ -53,6 +72,10 @@ class MySchemaProvider : HoconSchemaProvider {
         ))))
 }
 ```
+
+The same schema also powers an optional **unknown-key** inspection (off by default until a provider is
+registered). A companion `valueHighlighter` extension point lets a plugin colorize framework-specific
+values — for example, enum constants — with their own text attributes.
 
 ## Requirements
 
