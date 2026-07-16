@@ -79,7 +79,7 @@ values — for example, enum constants — with their own text attributes.
 
 ## Requirements
 
-- An IntelliJ-based IDE, build 251+ (2025.1 through 2026.x).
+- An IntelliJ-based IDE from the 2026.x line (build 261–263).
 - JDK 21 to build from source.
 
 ## Building

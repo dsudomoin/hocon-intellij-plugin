@@ -13,7 +13,7 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        intellijIdea("2025.3.5")
+        intellijIdea("2026.1.4")
         testFramework(TestFrameworkType.Platform)
         testFramework(TestFrameworkType.Plugin.Java)
 
@@ -27,8 +27,8 @@ dependencies {
 intellijPlatform {
     pluginConfiguration {
         ideaVersion {
-            // Support every IDEA 2025.x (251–253) and 2026.x (261–263) build.
-            sinceBuild = "251"
+            // Support the 2026.x line (build 261 through 263).
+            sinceBuild = "261"
             untilBuild = "263.*"
         }
 
@@ -59,4 +59,12 @@ intellijPlatform {
 changelog {
     groups.empty()
     repositoryUrl = "https://github.com/dsudomoin/hocon-intellij-plugin"
+}
+
+tasks.test {
+    // The unified IntelliJ distribution bundles the Vue plugin, whose LSP server loader throws from its
+    // static initializer in the headless test sandbox. Any test that makes the platform enumerate
+    // LspServerSupportProvider then fails via TestLoggerFactory's error escalation — unrelated to this
+    // plugin, and which test gets hit depends on run order. Nothing here needs Vue, so suppress it.
+    systemProperty("idea.suppressed.plugins.id", "org.jetbrains.plugins.vue")
 }
