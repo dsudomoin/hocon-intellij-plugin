@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>io.github.dsudomoin.hocon</id>
-    <name>HOCON</name>
+    <name>HOCON Support</name>
     <vendor url="https://github.com/dsudomoin">dsudomoin</vendor>
     <description><![CDATA[
         <p>Language support for <b>HOCON</b> (Human-Optimized Config Object Notation) &mdash; the

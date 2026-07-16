@@ -1,4 +1,4 @@
-# HOCON
+# HOCON Support
 
 [![Build](https://github.com/dsudomoin/hocon-intellij-plugin/actions/workflows/build.yml/badge.svg)](https://github.com/dsudomoin/hocon-intellij-plugin/actions/workflows/build.yml)
 
