@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-16
+
 ### Added
 
 - HOCON language support: file type for `.conf` and `.hocon`.
@@ -36,3 +38,6 @@
 - Language injection: string values are injection hosts, so any language can be injected into them.
 - `schemaProvider` extension point: external plugins can contribute a key schema that powers
   schema-aware completion, documentation, and an "unknown key" inspection (the base plugin ships none).
+
+[Unreleased]: https://github.com/dsudomoin/hocon-intellij-plugin/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/dsudomoin/hocon-intellij-plugin/commits/v1.0.0
