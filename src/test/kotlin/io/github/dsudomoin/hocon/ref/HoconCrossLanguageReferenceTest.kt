@@ -8,6 +8,7 @@ import com.intellij.psi.PsiRecursiveElementWalkingVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import io.github.dsudomoin.hocon.psi.HStringValue
+import io.github.dsudomoin.hocon.psi.HFieldKey
 
 class HoconCrossLanguageReferenceTest : LightJavaCodeInsightFixtureTestCase() {
 
@@ -83,5 +84,29 @@ class HoconCrossLanguageReferenceTest : LightJavaCodeInsightFixtureTestCase() {
         myFixture.configureByText("A.kt", "val s = \"app.<caret>\"")
         myFixture.completeBasic()
         assertContainsElements(myFixture.lookupElementStrings!!, "name", "enabled")
+    }
+
+    fun testAnnotationArgumentResolvesToNestedHoconKey() {
+        myFixture.addClass("package k;\npublic @interface KafkaListener { String value(); }")
+        myFixture.addFileToProject("application.conf", "kafka.consumers.orders { topics = [\"o\"] }")
+        val f = myFixture.configureByText(
+            "L.java",
+            "import k.KafkaListener;\nclass L { @KafkaListener(\"kafka.consumers.orders\") void go() {} }",
+        )
+        val ref = firstReferenceOfType<HoconStringLiteralPathReference>(f)
+        assertNotNull("expected a HOCON path reference on the annotation argument", ref)
+        assertEquals(
+            listOf("orders"),
+            (ref as PsiPolyVariantReference).multiResolve(false).map { (it.element as HFieldKey).name },
+        )
+    }
+
+    fun testFindUsagesOfHoconKeyFindsForeignLiterals() {
+        myFixture.addFileToProject("A.java", "class A { String s = \"app.name\"; }")
+        myFixture.addFileToProject("B.kt", "val s = \"app.name\"")
+        val conf = myFixture.configureByText("application.conf", "app.name = demo")
+        val key = PsiTreeUtil.collectElementsOfType(conf, HFieldKey::class.java).first { it.name == "name" }
+        val usages = myFixture.findUsages(key).map { it.element?.containingFile?.name }
+        assertEquals(listOf("A.java", "B.kt"), usages)
     }
 }

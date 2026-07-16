@@ -39,8 +39,9 @@ only on `com.intellij.modules.platform`, so it installs into any JetBrains IDE.
 - **Go to Next / Previous Definition** — jump between the repeated declarations of the same path, reusing
   the Go to Implementation / Go to Super shortcuts.
 - **Cross-language references** (when the Java/Kotlin plugin is installed) — a HOCON path inside a Java,
-  Kotlin or Scala string literal resolves to its key, and a fully-qualified class name inside a HOCON
-  string resolves to the JVM class.
+  Kotlin or Scala string literal (an annotation argument such as `@KafkaListener("kafka.consumers.orders")`,
+  a constant, any string) resolves to its key, and Find Usages on the key lists those literals back. A
+  fully-qualified class name inside a HOCON string resolves to the JVM class.
 
 ### Code assistance
 
