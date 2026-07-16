@@ -12,10 +12,10 @@ object HoconBundle {
 
     @JvmStatic
     @Nls
-    fun message(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Any?): String =
+    fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any?): String =
         instance.getMessage(key, *params)
 
     @JvmStatic
-    fun lazyMessage(key: @PropertyKey(resourceBundle = BUNDLE) String, vararg params: Any?): Supplier<String> =
+    fun lazyMessage(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any?): Supplier<String> =
         instance.getLazyMessage(key, *params)
 }
